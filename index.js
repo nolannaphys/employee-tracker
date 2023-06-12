@@ -84,7 +84,7 @@ const addDepartment = async function () {
       type: 'list',
       choices: choiceData,
       name: 'answers'
-    };
+    }
 ]);
 
 const otherAnswers = await inquirer.prompt([
