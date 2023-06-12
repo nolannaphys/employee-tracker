@@ -1,7 +1,20 @@
 const inquirer = require('inquirer');
 const { table } = require('table');
-const mysql = require('mysql2');
-const express = require('express');
+const mysql = require('mysql2/promise');
+
+let db;
+mysql.createConnection(
+  {
+    host: 'localhost',
+    user: 'root',
+    password: 'nolanpassword',
+    database: 'employee_db'
+  }
+)
+  .then((connection) => {
+    db = connection;
+    console.log(`Connected to the employee database.`)
+  });
 
 const config = {
   border: {
@@ -26,7 +39,7 @@ const config = {
   }
 };
 
-function showTable(data, cb) {
+async function showTable(data, cb) {
   let tableData = [];
   tableData = [
     //column
@@ -34,7 +47,7 @@ function showTable(data, cb) {
     //values
     ...data.map(val => Object.values(val))];
 
-  inquirer.prompt([
+  const answers = await inquirer.prompt([
     {
       message: "\n" + table(tableData, config),
       type: 'input',
@@ -48,11 +61,49 @@ function showTable(data, cb) {
 };
 
 const dbData = [
-  {id: 1, name: "Nolan"},
-  {id: 2, name: "Hank"},
-  {id: 3, name: "George"}
+  { id: 1, name: "Nolan" },
+  { id: 2, name: "Hank" },
+  { id: 3, name: "George" }
 ];
 
-showTable(dbData, () => {
-  console.log("Do stuff after!");
-});
+const addDepartment = async function () {
+  const resluts = await db.query("SELECT * FROM department");
+  const dbData = results[0];
+  const choiceData = dbData.map((row) => ({
+    name: row.name,
+    value: row
+  }))
+  choiceData.push({
+    name: "No Department",
+    value: { id: null }
+  });
+
+  const firstAnswer = await inquirer.prompt([
+    {
+      message: 'What would you like to do?',
+      type: 'list',
+      choices: choiceData,
+      name: 'answers'
+    };
+]);
+
+const otherAnswers = await inquirer.prompt([
+  {
+    name: 'View All Departments',
+    value: 'viewDepartment'
+  },
+  {
+    name: 'View All Roles',
+    value: 'viewRoles'
+  },
+  {
+    name: 'View All Employees',
+    value: 'viewEmployees'
+  }
+])
+}
+
+// showTable(dbData, () => {
+//   console.log("Do stuff after!");
+// });
+
