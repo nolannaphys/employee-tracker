@@ -10,6 +10,9 @@
     "author": "",
     "license": "MIT",
     "dependencies": {
-        "inquirer": "^8.2.4"
+        "express": "^4.18.2",
+        "inquirer": "^8.2.4",
+        "mysql2": "^3.3.4",
+        "table": "^6.8.1"
     }
 }
